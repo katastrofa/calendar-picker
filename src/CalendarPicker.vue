@@ -13,7 +13,13 @@
 
           @blur="closePicker"
           @input="validateText"
-          @keyup.esc.prevent="closePicker"
+
+          @keyup.esc.prevent="cancelPicker"
+          @keyup.enter.prevent="validateClose"
+          @keyup.ctrl.left.prevent.stop="prevMonth"
+          @keyup.ctrl.right.prevent.stop="nextMonth"
+          @keyup.up.prevent.stop="prevDay"
+          @keyup.down.prevent.stop="nextDay"
       />
     </div>
     <div class="calendar menu" :class="{ 'visible': showPicker }" @mousedown.prevent>
@@ -123,9 +129,11 @@
         }
       },
       formatDate: function (sDate) {
-        let validDate = this.validateSimpleDate(sDate)
-        return validDate.year.toString().padStart(4, '0') + '-' + validDate.month.toString().padStart(2, '0') + '-' +
-            validDate.day.toString().padStart(2, '0')
+        let formattedDate = ''
+        if (sDate.year) formattedDate += sDate.year.toString().padStart(4, '0') + '-'
+        if (sDate.month) formattedDate += sDate.month.toString().padStart(2, '0') + '-'
+        if (sDate.day) formattedDate += sDate.day.toString().padStart(2, '0')
+        return formattedDate
       },
 
       openPicker: function () {
@@ -135,12 +143,51 @@
       closePicker: function () {
         this.showPicker = false
       },
+      validateClose: function () {
+        this.insertDate = this.formatDate(this.selected)
+        this.closePicker()
+      },
+      cancelPicker: function () {
+        this.insertDate = (this.startDate) ? this.startDate : ''
+        this.closePicker()
+      },
+
+      changeDate: function (sDate) {
+        this.selected.year = sDate.year
+        this.selected.month = sDate.month
+        if (this.selected.day) this.selected.day = sDate.day
+        this.insertDate = this.formatDate(this.selected)
+      },
+      moveDay: function (move) {
+        let validDate = this.validateSimpleDate(this.selected)
+        let finalDate = this.dateToSimpleDate(new Date(validDate.year, validDate.month - 1, validDate.day + move))
+        this.changeDate(finalDate)
+      },
+      moveMonth: function (move) {
+        let validDate = this.validateSimpleDate(this.selected)
+        let tmpDate = new Date(validDate.year, validDate.month - 1 + move, validDate.day)
+        let correctMonth = new Date(validDate.year, validDate.month + move, 0)
+
+        let finalDate = tmpDate.getMonth() === correctMonth.getMonth()
+            ? this.dateToSimpleDate(tmpDate)
+            : this.dateToSimpleDate(correctMonth)
+        this.changeDate(finalDate)
+      },
+
       prevMonth: function () {
-        this.selected = this.dateToSimpleDate(new Date(this.selected.year, this.selected.month - 2, this.selected.day))
+        this.moveMonth(-1)
       },
       nextMonth: function () {
-        this.selected = this.dateToSimpleDate(new Date(this.selected.year, this.selected.month, this.selected.day))
+        this.moveMonth(1)
       },
+
+      prevDay: function () {
+        this.moveDay(-1)
+      },
+      nextDay: function () {
+        this.moveDay(1)
+      },
+
       selectDate: function (sDate) {
         this.selected = sDate
         this.insertDate = this.formatDate(sDate)
@@ -151,6 +198,7 @@
         if (this.$refs.input.value.match(/[^0-9-]/)) {
           this.$refs.input.value = this.$refs.input.value.replace(/[^0-9-]/g, '')
         }
+        this.showPicker = true
         this.selected = this.parseDate(this.$refs.input.value)
       },
 
