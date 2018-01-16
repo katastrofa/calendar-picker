@@ -4,8 +4,12 @@
     <calendar-picker start-date="2018-01-01" />
     <p>No date set, so today:</p>
     <calendar-picker />
-    <p>Last year some date</p>
-    <calendar-picker start-date="2017-07-07" />
+    <div class="ui inverted segment">
+      <p>Last year some date</p>
+      <calendar-picker start-date="2017-07-07" />
+      <p>Another empty picker</p>
+      <calendar-picker />
+    </div>
   </div>
 </template>
 

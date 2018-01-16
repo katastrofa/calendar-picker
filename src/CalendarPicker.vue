@@ -1,7 +1,8 @@
 <template>
   <div
-      class="ui fluid container dropdown"
+      class="ui fluid container dropdown calendar"
       @focusin="openPicker"
+      tabindex="-1"
   >
     <div class="ui input" @click="openPicker">
       <input
@@ -22,7 +23,7 @@
           @keyup.down.prevent.stop="nextDay"
       />
     </div>
-    <div class="calendar menu" :class="{ 'visible': showPicker }" @mousedown.prevent>
+    <div class="menu" :class="{ 'visible': showPicker }" @mousedown.prevent>
       <div class="head">
         <a class="left" @click.stop="prevMonth"><i class="chevron circle left icon"></i></a>
         <span class="title">{{ title }}</span>
@@ -68,7 +69,6 @@
     data: function () {
       return {
         insertDate: '',
-        displayDate: '',
         selected: {
           year: null,
           month: null,
@@ -248,7 +248,6 @@
   .dates {
     font-size: .8em;
     border: none;
-    border-top: 1px solid rgba(34, 36, 38, .15);
     border-collapse: separate;
     border-spacing: 0;
     margin: .3em 0;
@@ -264,14 +263,62 @@
     cursor: pointer;
     padding: .4em .5em;
   }
-  .dates tr td:hover {
+</style>
+
+<style>
+  .calendar .dates {
+    border-top: 1px solid rgba(34, 36, 38, .15);
+  }
+  .calendar .dates tr td:hover {
     background: rgba(90, 92, 94, .15);
   }
-  .dates tr td.selected {
+  .calendar .dates tr td.selected {
     background: rgba(90, 92, 94, .1);
   }
-  td.other {
+  .calendar td.other {
     color: #BBBBBB;
     background: rgba(180, 180, 180, .1);
+  }
+
+  .ui.inverted .calendar .input input {
+    background: #404040;
+    color: rgba(255, 255, 255, .9);
+  }
+  .ui.inverted .calendar .input input::placeholder {
+    color: rgba(120, 120, 120, .9);
+  }
+  .ui.inverted .calendar .menu {
+    background: #202020;
+  }
+  .ui.inverted .calendar .dates {
+    color: rgba(255, 255, 255, .9);
+    background: #202020;
+    border-top: 1px solid rgba(100, 100, 100, .6);
+  }
+  .ui.inverted .calendar .dates thead th {
+    background: #0A0A0A;
+    color: rgba(255, 255, 255, 1);
+    border-left: 1px solid rgba(100, 100, 100, .4);
+  }
+  .ui.inverted .calendar .dates thead th:first-child {
+    border-left: none;
+  }
+  .ui.inverted .calendar .dates tr td {
+    border-left: 1px solid rgba(100, 100, 100, .4);
+    border-top: 1px solid rgba(100, 100, 100, .4);
+  }
+  .ui.inverted .calendar .dates tr td:first-child {
+    border-left: none;
+  }
+  .ui.inverted .calendar .dates tr td:hover {
+    color: rgba(255, 255, 255, .9);
+    background: rgba(220, 220, 220, .15);
+  }
+  .ui.inverted .calendar .dates tr td.selected {
+    background: rgba(220, 220, 220, .1);
+  }
+  .ui.inverted .calendar td.other {
+    color: #808080;
+    background: rgba(160, 160, 160, .1);
   }
 </style>
